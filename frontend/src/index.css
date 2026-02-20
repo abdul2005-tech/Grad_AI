@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+
+:root {
+  --neon: #00ffcc; /* Electric Cyan */
+  --neon-dim: rgba(0, 255, 204, 0.1);
+  --bg: #0a0a0a;
+  --panel: #141414;
+  --border: #222;
+  --text: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+body {
+  margin: 0;
+  background-color: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* --- Navigation --- */
+.cyber-nav {
+  display: flex;
+  justify-content: space-between;
+  padding: 30px 60px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; }
+.logo span { color: var(--neon); }
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  color: var(--neon);
+}
+
+.dot {
+  width: 6px; height: 6px; background: var(--neon); border-radius: 50%;
+  box-shadow: 0 0 10px var(--neon);
+  animation: pulse 1.5s infinite;
+}
+
+/* --- Layout --- */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100vh - 85px);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.hero-side {
+  padding: 80px 60px;
+  border-right: 1px solid var(--border);
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border: 1px solid var(--neon);
+  color: var(--neon);
+  font-size: 0.6rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.hero-side h1 {
+  font-size: 5rem;
+  margin: 0 0 20px 0;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+
+.hero-side p {
+  max-width: 400px;
+  color: #888;
+  line-height: 1.6;
+}
+
+/* --- Form --- */
+.form-side {
+  padding: 80px 60px;
+  background: var(--panel);
+}
+
+.cyber-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.cyber-input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.cyber-input-group label {
+  font-size: 0.6rem;
+  color: #555;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.cyber-input-group input {
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 12px;
+  color: var(--neon);
+  font-size: 0.9rem;
+  transition: 0.3s;
+}
+
+.cyber-input-group input:focus {
+  outline: none;
+  border-color: var(--neon);
+  background: var(--neon-dim);
+}
+
+.cyber-btn {
+  grid-column: span 2;
+  margin-top: 20px;
+  background: var(--neon);
+  color: #000;
+  border: none;
+  padding: 20px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: 0.3s;
+}
+
+.cyber-btn:hover {
+  box-shadow: 0 0 30px var(--neon-dim);
+  letter-spacing: 4px;
+}
+
+/* --- Result Section --- */
+.cyber-result {
+  margin-top: 50px;
+  padding: 30px;
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.cyber-result.success { border-color: var(--neon); color: var(--neon); }
+.cyber-result.warning { border-color: #ff3e3e; color: #ff3e3e; }
+
+.result-value {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; }
+}
+
+@media (max-width: 1000px) {
+  .content-grid { grid-template-columns: 1fr; }
+  .hero-side { border-right: none; border-bottom: 1px solid var(--border); }
+}
+.nav-links { display: flex; gap: 30px; }
+.nav-item { 
+  text-decoration: none; 
+  color: #888; 
+  text-transform: uppercase; 
+  font-size: 0.8rem; 
+  letter-spacing: 1px;
+}
+.nav-item:hover { color: var(--neon); }
+
+.history-container { padding: 40px 60px; max-width: 1200px; margin: 0 auto; }
+.history-title { color: var(--neon); letter-spacing: 2px; margin-bottom: 30px; }
+
+.table-wrapper { 
+  background: var(--panel); 
+  border: 1px solid var(--border); 
+  border-radius: 4px; 
+  overflow: hidden; 
+}
+
+.cyber-table { width: 100%; border-collapse: collapse; text-align: left; }
+.cyber-table th { padding: 20px; border-bottom: 1px solid var(--border); font-size: 0.7rem; color: #555; text-transform: uppercase; }
+.cyber-table td { padding: 20px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+
+.text-success { color: var(--neon); font-weight: bold; }
+.text-danger { color: #ff3e3e; font-weight: bold; }
