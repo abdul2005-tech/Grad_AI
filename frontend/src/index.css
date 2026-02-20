@@ -193,3 +193,44 @@ body {
 
 .text-success { color: var(--neon); font-weight: bold; }
 .text-danger { color: #ff3e3e; font-weight: bold; }
+.cyber-input-group select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 12px;
+  color: var(--neon);
+  font-size: 0.9rem;
+  appearance: none; /* Removes default arrow */
+  cursor: pointer;
+}
+
+.cyber-input-group select option {
+  background: var(--panel);
+  color: var(--text);
+}
+
+.cyber-input-group select:focus {
+  outline: none;
+  border-color: var(--neon);
+  box-shadow: 0 0 10px var(--neon-dim);
+}
+.cyber-form select {
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 12px;
+  color: var(--neon);
+  font-size: 0.9rem;
+  width: 100%;
+  cursor: pointer;
+  appearance: none; /* Removes browser default arrow */
+}
+
+/* Optional: Add a custom arrow for the select box */
+.cyber-input-group {
+  position: relative;
+}
+
+.cyber-form select:focus {
+  outline: none;
+  border-color: var(--neon);
+  background: var(--neon-dim);
+}

@@ -1,16 +1,34 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+
 const API = import.meta.env.VITE_API_URL;
+
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({ username: "", password: "" });
   const navigate = useNavigate();
 
+  // Create refs for the inputs
+  const usernameRef = useRef(null);
+  const passwordRef = useRef(null);
+
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+  // Handle "Enter" key navigation
+  const handleKeyDown = (e, nextField) => {
+    if (e.key === "Enter") {
+      e.preventDefault(); // Prevent accidental form submission on the first field
+      if (nextField === "submit") {
+        handleSubmit(e); // Trigger login/register if Enter is pressed on password
+      } else if (nextField) {
+        nextField.current.focus(); // Focus password field if Enter is pressed on username
+      }
+    }
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const url = `${API}//${isLogin ? "login" : "register"}`;
+    if (e) e.preventDefault();
+    const url = `${API}/${isLogin ? "login" : "register"}`;
 
     try {
       const res = await fetch(url, {
@@ -25,7 +43,7 @@ const Auth = () => {
         setIsLogin(true);
       } else if (data.access_token) {
         localStorage.setItem("token", data.access_token);
-        window.location.href = "/"; // Force refresh to update Navbar state
+        window.location.href = "/";
       } else {
         alert(data.msg || "Error");
       }
@@ -46,11 +64,25 @@ const Auth = () => {
         <form className="cyber-form" onSubmit={handleSubmit} style={{display: 'flex', flexDirection: 'column'}}>
           <div className="cyber-input-group">
             <label>Username</label>
-            <input name="username" onChange={handleChange} required />
+            <input 
+              name="username" 
+              ref={usernameRef} // Attach ref
+              onChange={handleChange} 
+              onKeyDown={(e) => handleKeyDown(e, passwordRef)} // Move to password
+              required 
+              autoFocus
+            />
           </div>
           <div className="cyber-input-group" style={{marginTop: '20px'}}>
             <label>Password</label>
-            <input name="password" type="password" onChange={handleChange} required />
+            <input 
+              name="password" 
+              type="password" 
+              ref={passwordRef} // Attach ref
+              onChange={handleChange} 
+              onKeyDown={(e) => handleKeyDown(e, "submit")} // Click button
+              required 
+            />
           </div>
           <button type="submit" className="cyber-btn">
             {isLogin ? "INITIATE_SESSION" : "CREATE_ACCOUNT"}
