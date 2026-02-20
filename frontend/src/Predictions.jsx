@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+const API = import.meta.env.VITE_API_URL;
 const Predictions = () => {
   const [history, setHistory] = useState([]);
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const Predictions = () => {
     }
 
     // Fetch prediction history from backend
-    fetch("http://127.0.0.1:5000/history", {
+    fetch(`${API}//history`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

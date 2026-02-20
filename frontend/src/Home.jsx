@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+const API = import.meta.env.VITE_API_URL;
 const Home = () => {
   const [formData, setFormData] = useState({
     Age: "", Gender: "", Degree: "", Branch: "", CGPA: "",
@@ -20,7 +20,7 @@ const Home = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://127.0.0.1:5000/predict", {
+      const res = await fetch(`${API}//predict`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

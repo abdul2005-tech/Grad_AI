@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+const API = import.meta.env.VITE_API_URL;
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({ username: "", password: "" });
@@ -10,7 +10,7 @@ const Auth = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = `http://127.0.0.1:5000/${isLogin ? "login" : "register"}`;
+    const url = `${API}//${isLogin ? "login" : "register"}`;
 
     try {
       const res = await fetch(url, {
