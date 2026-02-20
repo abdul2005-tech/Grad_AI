@@ -10,15 +10,18 @@ const Navbar = () => {
 
   return (
     <nav className="cyber-nav">
-      <div className="logo">GRAD<span>.AI</span></div>
+      <div className="logo" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <img src="/logo.svg" alt="logo" style={{ width: '30px', height: '30px' }} />
+        GRAD<span>.AI</span>
+      </div>
 
       <div className="nav-links" style={{ alignItems: 'center' }}>
         <Link to="/" className="nav-item">Prediction</Link>
         <Link to="/predictions" className="nav-item">History</Link>
         {/* Reset button styles to match the Link items exactly */}
-        <button 
-          onClick={logout} 
-          className="nav-item" 
+        <button
+          onClick={logout}
+          className="nav-item"
           style={{
             background: 'none',
             border: 'none',

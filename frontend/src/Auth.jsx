@@ -6,29 +6,28 @@ const API = import.meta.env.VITE_API_URL;
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({ username: "", password: "" });
-  const navigate = useNavigate();
-
-  // Create refs for the inputs
+  
+  // Refs for keyboard navigation
   const usernameRef = useRef(null);
   const passwordRef = useRef(null);
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  // Handle "Enter" key navigation
   const handleKeyDown = (e, nextField) => {
     if (e.key === "Enter") {
-      e.preventDefault(); // Prevent accidental form submission on the first field
+      e.preventDefault();
       if (nextField === "submit") {
-        handleSubmit(e); // Trigger login/register if Enter is pressed on password
-      } else if (nextField) {
-        nextField.current.focus(); // Focus password field if Enter is pressed on username
+        handleSubmit(e); // Auto-clicks button
+      } else {
+        nextField.current.focus(); // Moves to next input
       }
     }
   };
 
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
-    const url = `${API}/${isLogin ? "login" : "register"}`;
+    // Clean URL to avoid double slashes
+    const url = `${API.replace(/\/+$/, '')}/${isLogin ? "login" : "register"}`;
 
     try {
       const res = await fetch(url, {
@@ -38,14 +37,12 @@ const Auth = () => {
       });
       const data = await res.json();
 
-      if (!isLogin) {
-        alert("Success! Now log in.");
-        setIsLogin(true);
-      } else if (data.access_token) {
+      if (isLogin && data.access_token) {
         localStorage.setItem("token", data.access_token);
-        window.location.href = "/";
+        window.location.href = "/"; 
       } else {
-        alert(data.msg || "Error");
+        alert(data.msg || "Success! Please log in.");
+        if (!isLogin) setIsLogin(true);
       }
     } catch (err) {
       alert("Server connection failed");
@@ -66,9 +63,9 @@ const Auth = () => {
             <label>Username</label>
             <input 
               name="username" 
-              ref={usernameRef} // Attach ref
+              ref={usernameRef}
               onChange={handleChange} 
-              onKeyDown={(e) => handleKeyDown(e, passwordRef)} // Move to password
+              onKeyDown={(e) => handleKeyDown(e, passwordRef)} 
               required 
               autoFocus
             />
@@ -78,9 +75,9 @@ const Auth = () => {
             <input 
               name="password" 
               type="password" 
-              ref={passwordRef} // Attach ref
+              ref={passwordRef}
               onChange={handleChange} 
-              onKeyDown={(e) => handleKeyDown(e, "submit")} // Click button
+              onKeyDown={(e) => handleKeyDown(e, "submit")} 
               required 
             />
           </div>
@@ -90,7 +87,8 @@ const Auth = () => {
           <button 
             type="button" 
             onClick={() => setIsLogin(!isLogin)}
-            style={{background: 'none', border: 'none', color: '#888', marginTop: '20px', cursor: 'pointer'}}
+            className="nav-item"
+            style={{background: 'none', border: 'none', marginTop: '20px', cursor: 'pointer', textAlign: 'center'}}
           >
             {isLogin ? "Need access? Register" : "Have access? Login"}
           </button>
