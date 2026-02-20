@@ -5,7 +5,8 @@ const Navbar = () => {
 
   const logout = () => {
     localStorage.removeItem("token");
-    window.location.href = "/auth"; // Force refresh to clear state
+    // This triggers the PrivateRoute to kick the user to /auth
+    navigate("/auth");
   };
 
   return (
@@ -15,10 +16,9 @@ const Navbar = () => {
         GRAD<span>.AI</span>
       </div>
 
-      <div className="nav-links" style={{ alignItems: 'center' }}>
+      <div className="nav-links" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         <Link to="/" className="nav-item">Prediction</Link>
         <Link to="/predictions" className="nav-item">History</Link>
-        {/* Reset button styles to match the Link items exactly */}
         <button
           onClick={logout}
           className="nav-item"
@@ -29,7 +29,8 @@ const Navbar = () => {
             margin: 0,
             cursor: 'pointer',
             fontFamily: 'inherit',
-            textTransform: 'uppercase'
+            textTransform: 'uppercase',
+            color: '#888'
           }}
         >
           Logout
