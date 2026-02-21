@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import ReactMarkdown from "react-markdown"; // 👈 Import Markdown Support
+import ReactMarkdown from "react-markdown";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -18,13 +18,13 @@ const Home = () => {
   const inputRefs = useRef([]);
 
   const fieldConfigs = [
-    { name: "Age", type: "number", placeholder: "18-30", min: 18, max: 30 },
+    { name: "Age", type: "number", placeholder: "Int: 18-30", min: 18, max: 30 },
     { name: "Gender", type: "select", options: ["Male", "Female"] },
     { name: "Degree", type: "select", options: ["B.Tech", "BE", "M.Tech", "BSc", "MCA"] },
     { name: "Branch", type: "select", options: ["CSE", "IT", "ECE", "EEE", "Mechanical", "Civil"] },
-    { name: "CGPA", type: "number", placeholder: "0.00-10.00", step: "0.01", min: 0, max: 10 },
-    { name: "Internships", type: "number", placeholder: "0-5", min: 0 },
-    { name: "Projects", type: "number", placeholder: "0-10", min: 0 },
+    { name: "CGPA", type: "number", placeholder: "Float: 0.00-10.00", step: "0.01", min: 0, max: 10 },
+    { name: "Internships", type: "number", placeholder: "Int: 0-5", min: 0 },
+    { name: "Projects", type: "number", placeholder: "Int: 0-10", min: 0 },
     { name: "Coding_Skills", type: "number", placeholder: "Rating: 1-10", min: 1, max: 10 },
     { name: "Communication_Skills", type: "number", placeholder: "Rating: 1-10", min: 1, max: 10 },
     { name: "Aptitude_Test_Score", type: "number", placeholder: "Score: 0-100", min: 0, max: 100 },
@@ -51,8 +51,7 @@ const Home = () => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setLoading(true);
-    setResult(""); // Reset old results
-    setAdvice(""); // Reset old advice
+    setAdvice(""); 
 
     try {
       const token = localStorage.getItem("token");
@@ -75,9 +74,7 @@ const Home = () => {
       const data = await res.json();
       setResult(data.prediction);
       setAdvice(data.advice || ""); 
-
     } catch (err) {
-      console.error("Submission error:", err);
       alert("System Offline: Ensure Flask is active.");
     } finally {
       setLoading(false);
@@ -91,7 +88,6 @@ const Home = () => {
         <h1>Future <br />Outcome <br />Simulator.</h1>
         <p>Analyze academic metrics using calibrated neural datasets.</p>
 
-        {/* Results Section */}
         {result && (
           <div className={`cyber-result ${result === "Placed" ? "success" : "warning"}`}>
             <small>CALCULATION COMPLETE</small>
@@ -99,15 +95,13 @@ const Home = () => {
           </div>
         )}
 
-        {/* AI Advice Section - Placed directly below Result */}
         {advice && (
           <div className="cyber-advice">
             <div className="advice-header">
               <span className="pulse-dot"></span>
               <small>AI CAREER GUIDANCE</small>
             </div>
-            {/* 👈 Render Advice using ReactMarkdown for better visibility */}
-            <div className="advice-text">
+            <div className="advice-scroll-box">
                <ReactMarkdown>{advice}</ReactMarkdown>
             </div>
           </div>
@@ -116,40 +110,43 @@ const Home = () => {
 
       <section className="form-side">
         <form className="cyber-form" onSubmit={handleSubmit}>
-          {fieldConfigs.map((config, index) => (
-            <div key={config.name} className="cyber-input-group">
-              <label>{config.name.replace(/_/g, " ")}</label>
-              {config.type === "select" ? (
-                <select
-                  name={config.name}
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  value={formData[config.name]}
-                  onChange={handleChange}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  required
-                >
-                  <option value="">Select</option>
-                  {config.options.map(opt => (
-                    <option key={opt} value={opt}>{opt}</option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  type="number"
-                  name={config.name}
-                  ref={(el) => (inputRefs.current[index] = el)}
-                  placeholder={config.placeholder}
-                  step={config.step || "1"}
-                  min={config.min}
-                  max={config.max}
-                  value={formData[config.name]}
-                  onChange={handleChange}
-                  onKeyDown={(e) => handleKeyDown(e, index)}
-                  required
-                />
-              )}
-            </div>
-          ))}
+          {/* Added a container for inputs to keep them scrollable while the button stays fixed at bottom */}
+          <div className="inputs-container">
+            {fieldConfigs.map((config, index) => (
+              <div key={config.name} className="cyber-input-group">
+                <label>{config.name.replace(/_/g, " ")}</label>
+                {config.type === "select" ? (
+                  <select
+                    name={config.name}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    value={formData[config.name]}
+                    onChange={handleChange}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    required
+                  >
+                    <option value="">Select</option>
+                    {config.options.map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="number"
+                    name={config.name}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    placeholder={config.placeholder}
+                    step={config.step || "1"}
+                    min={config.min}
+                    max={config.max}
+                    value={formData[config.name]}
+                    onChange={handleChange}
+                    onKeyDown={(e) => handleKeyDown(e, index)}
+                    required
+                  />
+                )}
+              </div>
+            ))}
+          </div>
 
           <button type="submit" className="cyber-btn" disabled={loading}>
             {loading ? "INITIALIZING..." : "EXECUTE_ANALYSIS"}
