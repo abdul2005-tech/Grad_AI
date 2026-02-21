@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 
-const API = import.meta.env.VITE_API_URL;
+const API = import.meta.env.VITE_API_URL.replace(/\/+$/, ''); // Clean URL
 
 const Home = () => {
   const [formData, setFormData] = useState({
@@ -11,48 +11,44 @@ const Home = () => {
   });
   const [result, setResult] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // Array of refs to manage focus transitions
   const inputRefs = useRef([]);
 
   const fieldConfigs = [
-    { name: "Age", type: "number", placeholder: "Int: 18-30", min: 18, max: 30 },
+    { name: "Age", type: "number", placeholder: "18-30", min: 18, max: 30 },
     { name: "Gender", type: "select", options: ["Male", "Female"] },
     { name: "Degree", type: "select", options: ["B.Tech", "BE", "M.Tech", "BSc", "MCA"] },
     { name: "Branch", type: "select", options: ["CSE", "IT", "ECE", "EEE", "Mechanical", "Civil"] },
-    { name: "CGPA", type: "number", placeholder: "Float: 0.00-10.00", step: "0.01", min: 0, max: 10 },
-    { name: "Internships", type: "number", placeholder: "Int: 0-5", min: 0 },
-    { name: "Projects", type: "number", placeholder: "Int: 0-10", min: 0 },
-    { name: "Coding_Skills", type: "number", placeholder: "Rating: 1-10", min: 1, max: 10 },
-    { name: "Communication_Skills", type: "number", placeholder: "Rating: 1-10", min: 1, max: 10 },
-    { name: "Aptitude_Test_Score", type: "number", placeholder: "Score: 0-100", min: 0, max: 100 },
-    { name: "Soft_Skills_Rating", type: "number", placeholder: "Rating: 1-5", min: 1, max: 5 },
-    { name: "Certifications", type: "number", placeholder: "Count: 0-20", min: 0 },
-    { name: "Backlogs", type: "number", placeholder: "Count: 0-10", min: 0 }
+    { name: "CGPA", type: "number", placeholder: "0.00-10.00", step: "0.01", min: 0, max: 10 },
+    { name: "Internships", type: "number", placeholder: "0-5", min: 0 },
+    { name: "Projects", type: "number", placeholder: "0-10", min: 0 },
+    { name: "Coding_Skills", type: "number", placeholder: "1-10", min: 1, max: 10 },
+    { name: "Communication_Skills", type: "number", placeholder: "1-10", min: 1, max: 10 },
+    { name: "Aptitude_Test_Score", type: "number", placeholder: "0-100", min: 0, max: 100 },
+    { name: "Soft_Skills_Rating", type: "number", placeholder: "1-5", min: 1, max: 5 },
+    { name: "Certifications", type: "number", placeholder: "0-20", min: 0 },
+    { name: "Backlogs", type: "number", placeholder: "0-10", min: 0 }
   ];
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  // Move focus to next input on Enter key
   const handleKeyDown = (e, index) => {
     if (e.key === "Enter") {
       e.preventDefault();
       if (index < fieldConfigs.length - 1) {
         inputRefs.current[index + 1].focus();
       } else {
-        handleSubmit(e);
+        handleSubmit();
       }
     }
   };
 
   const handleSubmit = async (e) => {
-    if(e) e.preventDefault();
+    if (e) e.preventDefault();
     setLoading(true);
+    setResult(""); // Clear old result
+    
     try {
       const token = localStorage.getItem("token");
-      
       const cleanedData = Object.fromEntries(
         Object.entries(formData).map(([k, v]) => {
           const config = fieldConfigs.find(f => f.name === k);
@@ -70,9 +66,13 @@ const Home = () => {
       });
       
       const data = await res.json();
-      setResult(data.prediction);
+      if (data.prediction) {
+        setResult(data.prediction); // This displays the output
+      } else {
+        alert(data.msg || "Prediction Error");
+      }
     } catch (err) {
-      alert("System Offline: Ensure Flask is active.");
+      alert("System Offline: Check your connection.");
     } finally {
       setLoading(false);
     }
@@ -97,7 +97,6 @@ const Home = () => {
           {fieldConfigs.map((config, index) => (
             <div key={config.name} className="cyber-input-group">
               <label>{config.name.replace(/_/g, " ")}</label>
-              
               {config.type === "select" ? (
                 <select 
                   name={config.name} 
