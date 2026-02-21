@@ -404,3 +404,23 @@ body {
 .form-scroll-area::-webkit-scrollbar-thumb {
   background: #333;
 }
+.advice-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #bdc3c7;
+  margin: 0;
+}
+
+/* Ensure lists inside the advice are visible */
+.advice-text ul {
+  padding-left: 1.2rem;
+  margin: 0.5rem 0;
+}
+
+.advice-text li {
+  margin-bottom: 0.4rem;
+}
+
+.advice-text strong {
+  color: #00ff9d; /* Make bold text pop in AI green */
+}

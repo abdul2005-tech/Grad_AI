@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import ReactMarkdown from "react-markdown"; // 👈 Import Markdown Support
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -11,7 +12,7 @@ const Home = () => {
   });
 
   const [result, setResult] = useState("");
-  const [advice, setAdvice] = useState(""); 
+  const [advice, setAdvice] = useState("");   
   const [loading, setLoading] = useState(false);
 
   const inputRefs = useRef([]);
@@ -24,12 +25,12 @@ const Home = () => {
     { name: "CGPA", type: "number", placeholder: "0.00-10.00", step: "0.01", min: 0, max: 10 },
     { name: "Internships", type: "number", placeholder: "0-5", min: 0 },
     { name: "Projects", type: "number", placeholder: "0-10", min: 0 },
-    { name: "Coding_Skills", type: "number", placeholder: "1-10", min: 1, max: 10 },
-    { name: "Communication_Skills", type: "number", placeholder: "1-10", min: 1, max: 10 },
-    { name: "Aptitude_Test_Score", type: "number", placeholder: "0-100", min: 0, max: 100 },
-    { name: "Soft_Skills_Rating", type: "number", placeholder: "1-5", min: 1, max: 5 },
-    { name: "Certifications", type: "number", placeholder: "0-20", min: 0 },
-    { name: "Backlogs", type: "number", placeholder: "0-10", min: 0 }
+    { name: "Coding_Skills", type: "number", placeholder: "Rating: 1-10", min: 1, max: 10 },
+    { name: "Communication_Skills", type: "number", placeholder: "Rating: 1-10", min: 1, max: 10 },
+    { name: "Aptitude_Test_Score", type: "number", placeholder: "Score: 0-100", min: 0, max: 100 },
+    { name: "Soft_Skills_Rating", type: "number", placeholder: "Rating: 1-5", min: 1, max: 5 },
+    { name: "Certifications", type: "number", placeholder: "Count: 0-20", min: 0 },
+    { name: "Backlogs", type: "number", placeholder: "Count: 0-10", min: 0 }
   ];
 
   const handleChange = (e) => {
@@ -50,7 +51,8 @@ const Home = () => {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setLoading(true);
-    setAdvice(""); 
+    setResult(""); // Reset old results
+    setAdvice(""); // Reset old advice
 
     try {
       const token = localStorage.getItem("token");
@@ -75,6 +77,7 @@ const Home = () => {
       setAdvice(data.advice || ""); 
 
     } catch (err) {
+      console.error("Submission error:", err);
       alert("System Offline: Ensure Flask is active.");
     } finally {
       setLoading(false);
@@ -83,78 +86,71 @@ const Home = () => {
 
   return (
     <main className="content-grid">
-      {/* Left Side: Information & Results */}
       <aside className="hero-side">
-        <div className="hero-text-content">
-          <div className="badge">AI PREDICTION ENGINE</div>
-          <h1>Future <br />Outcome <br />Simulator.</h1>
-          <p className="hero-subtext">Analyze academic metrics using calibrated neural datasets.</p>
-        </div>
+        <div className="badge">AI PREDICTION ENGINE</div>
+        <h1>Future <br />Outcome <br />Simulator.</h1>
+        <p>Analyze academic metrics using calibrated neural datasets.</p>
 
-        <div className="results-container">
-          {result && (
-            <div className={`cyber-result ${result === "Placed" ? "success" : "warning"}`}>
-              <div className="result-header">
-                <span className="status-dot"></span>
-                <small>CALCULATION COMPLETE</small>
-              </div>
-              <div className="result-value">{result}</div>
-            </div>
-          )}
+        {/* Results Section */}
+        {result && (
+          <div className={`cyber-result ${result === "Placed" ? "success" : "warning"}`}>
+            <small>CALCULATION COMPLETE</small>
+            <div className="result-value">{result}</div>
+          </div>
+        )}
 
-          {advice && (
-            <div className="cyber-advice">
-              <div className="advice-header">
-                <span className="pulse-icon"></span>
-                <small>AI CAREER GUIDANCE</small>
-              </div>
-              <div className="advice-body">
-                <p>{advice}</p>
-              </div>
+        {/* AI Advice Section - Placed directly below Result */}
+        {advice && (
+          <div className="cyber-advice">
+            <div className="advice-header">
+              <span className="pulse-dot"></span>
+              <small>AI CAREER GUIDANCE</small>
             </div>
-          )}
-        </div>
+            {/* 👈 Render Advice using ReactMarkdown for better visibility */}
+            <div className="advice-text">
+               <ReactMarkdown>{advice}</ReactMarkdown>
+            </div>
+          </div>
+        )}
       </aside>
 
-      {/* Right Side: Input Form */}
       <section className="form-side">
         <form className="cyber-form" onSubmit={handleSubmit}>
-          <div className="form-scroll-area">
-            {fieldConfigs.map((config, index) => (
-              <div key={config.name} className="cyber-input-group">
-                <label>{config.name.replace(/_/g, " ")}</label>
-                {config.type === "select" ? (
-                  <select
-                    name={config.name}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    value={formData[config.name]}
-                    onChange={handleChange}
-                    onKeyDown={(e) => handleKeyDown(e, index)}
-                    required
-                  >
-                    <option value="">Select</option>
-                    {config.options.map(opt => (
-                      <option key={opt} value={opt}>{opt}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="number"
-                    name={config.name}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    placeholder={config.placeholder}
-                    step={config.step || "1"}
-                    min={config.min}
-                    max={config.max}
-                    value={formData[config.name]}
-                    onChange={handleChange}
-                    onKeyDown={(e) => handleKeyDown(e, index)}
-                    required
-                  />
-                )}
-              </div>
-            ))}
-          </div>
+          {fieldConfigs.map((config, index) => (
+            <div key={config.name} className="cyber-input-group">
+              <label>{config.name.replace(/_/g, " ")}</label>
+              {config.type === "select" ? (
+                <select
+                  name={config.name}
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  value={formData[config.name]}
+                  onChange={handleChange}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  required
+                >
+                  <option value="">Select</option>
+                  {config.options.map(opt => (
+                    <option key={opt} value={opt}>{opt}</option>
+                  ))}
+                </select>
+              ) : (
+                <input
+                  type="number"
+                  name={config.name}
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  placeholder={config.placeholder}
+                  step={config.step || "1"}
+                  min={config.min}
+                  max={config.max}
+                  value={formData[config.name]}
+                  onChange={handleChange}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  required
+                />
+              )}
+            </div>
+          ))}
+
           <button type="submit" className="cyber-btn" disabled={loading}>
             {loading ? "INITIALIZING..." : "EXECUTE_ANALYSIS"}
           </button>
