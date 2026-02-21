@@ -317,3 +317,90 @@ body {
     font-size: 0.5rem;
   }
 }
+/* Layout Overhaul */
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 100vh;
+  gap: 2rem;
+  padding: 2rem;
+  overflow: hidden;
+}
+
+.hero-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-right: 2rem;
+}
+
+.results-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+/* Advice Box Styling */
+.cyber-advice {
+  background: rgba(0, 255, 157, 0.05);
+  border-left: 3px solid #00ff9d;
+  padding: 1.25rem;
+  border-radius: 4px;
+  animation: slideIn 0.4s ease-out;
+}
+
+.advice-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #00ff9d;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.advice-body p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: #ccc;
+  font-family: 'Courier New', monospace;
+}
+
+/* Animations */
+.pulse-icon {
+  width: 8px;
+  height: 8px;
+  background: #00ff9d;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #00ff9d;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.3; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Ensure form is scrollable if inputs exceed height */
+.form-scroll-area {
+  overflow-y: auto;
+  padding-right: 10px;
+  max-height: 70vh;
+}
+
+.form-scroll-area::-webkit-scrollbar {
+  width: 4px;
+}
+
+.form-scroll-area::-webkit-scrollbar-thumb {
+  background: #333;
+}

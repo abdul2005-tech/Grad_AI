@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 import os
 import pickle
 import pandas as pd
+from ai_helper import get_ai_advice
 
 load_dotenv()
 
@@ -73,13 +74,24 @@ def predict():
     df = pd.DataFrame([data])
     pred = model.predict(df)[0]
     result = "Placed" if pred == 1 else "Not Placed"
-    
+
+    advice = None
+
+    # CALL AI ONLY IF NOT PLACED
+    if result == "Not Placed":
+        try:
+            advice = get_ai_advice(data)
+        except Exception as e:
+            advice = "AI advice currently unavailable."
+
     user_id = int(get_jwt_identity())
     record = Prediction(user_id=user_id, input_data=data, result=result)
     db.session.add(record)
     db.session.commit()
-    return jsonify({"prediction": result})
-
+    return jsonify({
+        "prediction": result,
+        "advice": advice
+    })
 @app.route("/history", methods=["GET"])
 @jwt_required()
 def history():
