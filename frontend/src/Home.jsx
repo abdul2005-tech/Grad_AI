@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import ReactMarkdown from "react-markdown";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -10,11 +9,10 @@ const Home = () => {
     Communication_Skills: "", Aptitude_Test_Score: "",
     Soft_Skills_Rating: "", Certifications: "", Backlogs: ""
   });
-
   const [result, setResult] = useState("");
-  const [advice, setAdvice] = useState("");   
   const [loading, setLoading] = useState(false);
 
+  // Array of refs to manage focus transitions
   const inputRefs = useRef([]);
 
   const fieldConfigs = [
@@ -37,6 +35,7 @@ const Home = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Move focus to next input on Enter key
   const handleKeyDown = (e, index) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -49,12 +48,11 @@ const Home = () => {
   };
 
   const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
+    if(e) e.preventDefault();
     setLoading(true);
-    setAdvice(""); 
-
     try {
       const token = localStorage.getItem("token");
+      
       const cleanedData = Object.fromEntries(
         Object.entries(formData).map(([k, v]) => {
           const config = fieldConfigs.find(f => f.name === k);
@@ -70,10 +68,9 @@ const Home = () => {
         },
         body: JSON.stringify(cleanedData)
       });
-
+      
       const data = await res.json();
       setResult(data.prediction);
-      setAdvice(data.advice || ""); 
     } catch (err) {
       alert("System Offline: Ensure Flask is active.");
     } finally {
@@ -87,67 +84,49 @@ const Home = () => {
         <div className="badge">AI PREDICTION ENGINE</div>
         <h1>Future <br />Outcome <br />Simulator.</h1>
         <p>Analyze academic metrics using calibrated neural datasets.</p>
-
         {result && (
           <div className={`cyber-result ${result === "Placed" ? "success" : "warning"}`}>
             <small>CALCULATION COMPLETE</small>
             <div className="result-value">{result}</div>
           </div>
         )}
-
-        {advice && (
-          <div className="cyber-advice">
-            <div className="advice-header">
-              <span className="pulse-dot"></span>
-              <small>AI CAREER GUIDANCE</small>
-            </div>
-            <div className="advice-scroll-box">
-               <ReactMarkdown>{advice}</ReactMarkdown>
-            </div>
-          </div>
-        )}
       </aside>
 
       <section className="form-side">
         <form className="cyber-form" onSubmit={handleSubmit}>
-          {/* Added a container for inputs to keep them scrollable while the button stays fixed at bottom */}
-          <div className="inputs-container">
-            {fieldConfigs.map((config, index) => (
-              <div key={config.name} className="cyber-input-group">
-                <label>{config.name.replace(/_/g, " ")}</label>
-                {config.type === "select" ? (
-                  <select
-                    name={config.name}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    value={formData[config.name]}
-                    onChange={handleChange}
-                    onKeyDown={(e) => handleKeyDown(e, index)}
-                    required
-                  >
-                    <option value="">Select</option>
-                    {config.options.map(opt => (
-                      <option key={opt} value={opt}>{opt}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="number"
-                    name={config.name}
-                    ref={(el) => (inputRefs.current[index] = el)}
-                    placeholder={config.placeholder}
-                    step={config.step || "1"}
-                    min={config.min}
-                    max={config.max}
-                    value={formData[config.name]}
-                    onChange={handleChange}
-                    onKeyDown={(e) => handleKeyDown(e, index)}
-                    required
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-
+          {fieldConfigs.map((config, index) => (
+            <div key={config.name} className="cyber-input-group">
+              <label>{config.name.replace(/_/g, " ")}</label>
+              
+              {config.type === "select" ? (
+                <select 
+                  name={config.name} 
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  value={formData[config.name]} 
+                  onChange={handleChange}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  required
+                >
+                  <option value="">Select</option>
+                  {config.options.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+                </select>
+              ) : (
+                <input
+                  type="number"
+                  name={config.name}
+                  ref={(el) => (inputRefs.current[index] = el)}
+                  placeholder={config.placeholder}
+                  step={config.step || "1"}
+                  min={config.min}
+                  max={config.max}
+                  value={formData[config.name]}
+                  onChange={handleChange}
+                  onKeyDown={(e) => handleKeyDown(e, index)}
+                  required
+                />
+              )}
+            </div>
+          ))}
           <button type="submit" className="cyber-btn" disabled={loading}>
             {loading ? "INITIALIZING..." : "EXECUTE_ANALYSIS"}
           </button>
